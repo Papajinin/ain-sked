@@ -3,17 +3,17 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <!-- 홈 화면 앱: 상태 표시줄을 화면과 겹치지 않게 따로 두고, 아이콘 이름은 Todo (2026-11-24: AIN을 빼고 짧게, Done과 같게) -->
+  <!-- 홈 화면 앱: 상태 표시줄을 화면과 겹치지 않게 따로 두고, 아이콘 이름은 Sked (2026-11-24: Todo → Sked, 할 일 목록 → 일정·캘린더) -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Todo">
-  <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
-  <link rel="icon" type="image/png" href="apple-touch-icon.png?v=3">
-  <title>AIN Todo</title>
+  <meta name="apple-mobile-web-app-title" content="Sked">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png?v=4">
+  <link rel="icon" type="image/png" href="apple-touch-icon.png?v=4">
+  <title>AIN Sked</title>
   <script>
     // 저장된 화면 모드와 테마 색을 먼저 적용해서 색이 깜빡이지 않게
     try {
-      const s = JSON.parse(localStorage.getItem('ainTodo')).settings;
+      const s = JSON.parse(localStorage.getItem('ainSked')).settings;
       if (s.theme === 'light' || s.theme === 'dark') document.documentElement.setAttribute('data-theme', s.theme);
       if (s.accent === 'green' || s.accent === 'red' || s.accent === 'yellow') document.documentElement.setAttribute('data-accent', s.accent);
     } catch (e) {}
@@ -21,10 +21,10 @@
   <script>
     // 새 버전 스스로 받기 (네 앱 공통): 켤 때 서버의 version.txt 숫자가 아래 APP_VERSION보다 크면
     // 새 화면 파일을 받아 한 번 새로고침. 올릴 때마다 두 숫자를 같이 올린다
-    const APP_VERSION = 10;
+    const APP_VERSION = 11;
     (function () {
       const t0 = Date.now();
-      const key = 'ainTodo.updated'; // 같은 버전으로 두 번 새로고침하지 않게
+      const key = 'ainSked.updated'; // 같은 버전으로 두 번 새로고침하지 않게
       fetch('version.txt?t=' + t0, { cache: 'no-store' })
         .then(r => r.ok ? r.text() : '')
         .then(txt => {
@@ -40,20 +40,20 @@
   <link rel="stylesheet" href="style.css?v=28">
 </head>
 <body>
-  <!-- 시작 화면 (앱을 새로 열 때만, 약 2초): 파란 원이 펼쳐지고 → 체크가 그려짐 → 이름 → 색 점 4개 (세 앱 공통 순서) -->
+  <!-- 시작 화면 (앱을 새로 열 때만, 약 1.6초): 파란 원이 펼쳐지고 → 달력 틀과 고리가 그려지고 → 안에 체크 → 이름 (AIN 앱 공통 순서) -->
   <div class="splash" id="splash" aria-hidden="true">
     <div class="splash-mark">
       <div class="splash-disc">
-        <svg viewBox="0 0 64 64"><circle class="splash-bg" cx="32" cy="32" r="32"/><path class="splash-draw" pathLength="100" d="M20 33 L28.5 41.5 L44.5 24" stroke-width="6.5" style="--at:.55s;--d:.4s"/></svg>
+        <svg viewBox="0 0 64 64"><circle class="splash-bg" cx="32" cy="32" r="32"/><path class="splash-draw" pathLength="100" d="M20.5 19 H43.5 A6 6 0 0 1 49.5 25 V43 A6 6 0 0 1 43.5 49 H20.5 A6 6 0 0 1 14.5 43 V25 A6 6 0 0 1 20.5 19 Z" stroke-width="5" style="--at:.5s;--d:.36s"/><path class="splash-draw" pathLength="100" d="M24 13.5 V21" stroke-width="5" style="--at:.78s;--d:.1s"/><path class="splash-draw" pathLength="100" d="M40 13.5 V21" stroke-width="5" style="--at:.78s;--d:.1s"/><path class="splash-draw" pathLength="100" d="M24.5 34.5 L30 40 L40 30" stroke-width="5" style="--at:.9s;--d:.22s"/></svg>
       </div>
-      <div class="wordmark splash-word"><b>AIN</b> Todo</div>
+      <div class="wordmark splash-word"><b>AIN</b> Sked</div>
     </div>
   </div>
 
   <div class="app">
     <!-- 상단 헤더 -->
     <header class="top">
-      <h1 class="wordmark"><b>AIN</b> Todo</h1>
+      <h1 class="wordmark"><b>AIN</b> Sked</h1>
       <div class="top-right">
         <button class="icon-btn" id="drawerBtn" type="button" aria-label="서랍장">
           <span class="icon-circle">
@@ -250,8 +250,10 @@
         <div class="group-label">데이터</div>
         <div class="group">
           <button class="row link" id="exportBtn" type="button">백업 파일 내보내기</button>
+          <button class="row link" id="importBtn" type="button">백업 파일 가져오기</button>
+          <input type="file" id="importFile" accept=".json,application/json" hidden>
         </div>
-        <p class="hint">할 일과 카테고리를 파일 하나로 저장해요.</p>
+        <p class="hint">할 일과 카테고리를 파일 하나로 저장해요. 가져오기는 이미 있는 할 일은 그대로 두고, 없는 것만 더해요. 예전 AIN Todo 백업 파일도 가져올 수 있어요.</p>
       </div>
     </div>
   </div>
@@ -259,7 +261,7 @@
   <!-- 로그인 화면 -->
   <div class="login" id="login" hidden>
     <div class="login-box">
-      <h1 class="wordmark big"><b>AIN</b> Todo</h1>
+      <h1 class="wordmark big"><b>AIN</b> Sked</h1>
       <p class="login-sub">가족 계정으로 로그인해 주세요</p>
       <button class="add-btn" id="loginBtn" type="button">Google로 로그인</button>
       <p class="f-error login-error" id="loginError" hidden></p>
@@ -270,7 +272,7 @@
   <div class="login lock-screen" id="appLock" hidden>
     <div class="login-box">
       <div class="lock-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div>
-      <h1 class="wordmark big"><b>AIN</b> Todo</h1>
+      <h1 class="wordmark big"><b>AIN</b> Sked</h1>
       <p class="login-sub">잠겨 있어요</p>
       <p class="f-error login-error" id="lockError" hidden>확인하지 못했어요. 다시 눌러 주세요.</p>
       <button class="add-btn" id="unlockBtn" type="button">잠금 풀기</button>
@@ -293,15 +295,15 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   <script src="holidays.js?v=1"></script>
-  <script src="app.js?v=11"></script>
+  <script src="app.js?v=12"></script>
   <script src="calendar.js?v=5"></script>
   <script src="tasks.js?v=6"></script>
   <script src="sheet.js?v=8"></script>
   <script src="drawer.js?v=3"></script>
   <script src="pick.js?v=2"></script>
-  <script src="settings.js?v=3"></script>
-  <script src="sync.js?v=3"></script>
-  <script src="lock.js?v=2"></script>
+  <script src="settings.js?v=4"></script>
+  <script src="sync.js?v=4"></script>
+  <script src="lock.js?v=3"></script>
   <script src="main.js?v=10"></script>
 </body>
 </html>

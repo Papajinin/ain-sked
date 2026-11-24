@@ -1,6 +1,6 @@
-// AIN Todo 공통 v10: 날짜 도우미(공휴일 포함), 저장소, 상태, 화면 모드·테마 색
+// AIN Sked 공통 v10: 날짜 도우미(공휴일 포함), 저장소, 상태, 화면 모드·테마 색
 
-const STORE_KEY = 'ainTodo';
+const STORE_KEY = 'ainSked'; // 2026-11-24 Todo → Sked (예전 이름표 ainTodo와 섞이지 않게)
 const WEEK_NAMES = ['일', '월', '화', '수', '목', '금', '토'];
 
 // ---------- 날짜 ('YYYY-MM-DD' 문자열로 다룸) ----------

@@ -1,12 +1,12 @@
-// AIN Todo 잠금 v2: Face ID·지문으로 앱 열기 (네 앱 공통 방식)
+// AIN Sked 잠금 v2: Face ID·지문으로 앱 열기 (네 앱 공통 방식)
 //  - 아이폰의 "패스키"(WebAuthn) 기능을 빌려서, 얼굴·지문 확인이 통과했는지만 봄
 //  - 여러 번 실패하면 아이폰이 알아서 아이폰 암호를 물어봄 (앱 비밀번호는 따로 없음)
 //  - 켜기/끄기는 이 기기에만 저장 (지문은 기기마다 다르니까). 클라우드에는 올리지 않음
 //  - 진짜 금고는 구글 로그인 + Firestore 규칙. 이 잠금은 폰이 열린 채로 남이 앱을 켜는 걸 막는 가림막
 
-const LOCK_KEY = 'ainTodo.lock';  // 이 기기에서 등록한 열쇠 번호 (없으면 잠금 꺼짐)
+const LOCK_KEY = 'ainSked.lock';  // 이 기기에서 등록한 열쇠 번호 (없으면 잠금 꺼짐)
 const LOCK_AFTER = 60 * 1000;     // 내려 둔 지 1분이 지나면 다시 물어봄
-const LOCK_NAME = 'AIN Todo 잠금'; // 아이폰 패스키 창과 "암호" 목록에 보이는 이름
+const LOCK_NAME = 'AIN Sked 잠금'; // 아이폰 패스키 창과 "암호" 목록에 보이는 이름
 
 const lockEl = document.getElementById('appLock');
 const lockError = document.getElementById('lockError');

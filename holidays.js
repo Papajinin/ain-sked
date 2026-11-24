@@ -1,6 +1,6 @@
 // 공휴일 목록 v1 (Todo · Days · Line이 같이 씀): 날짜 → 이름
 //  - 연초에 그해 목록을 넣고, 임시공휴일은 생길 때마다 한 줄 추가
-//  - 다른 앱은 https://papajinin.github.io/ain-todo/holidays.js 를 불러서 씀
+//  - 다른 앱은 https://papajinin.github.io/ain-sked/holidays.js 를 불러서 씀
 //  - 2026·2027년: 한국천문연구원 월력, 인사혁신처 발표(노동절·제헌절 2026년부터 공휴일) 확인
 
 const HOLIDAYS = {

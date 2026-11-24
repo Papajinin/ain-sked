@@ -1,4 +1,4 @@
-// AIN Todo 설정 v3: 화면 모드, 테마 색, 한 주의 시작, 캘린더 기본 보기, 카테고리 관리, 계정, 백업 내보내기
+// AIN Sked 설정 v3: 화면 모드, 테마 색, 한 주의 시작, 캘린더 기본 보기, 카테고리 관리, 계정, 백업 내보내기·가져오기
 
 const settingsOverlay = document.getElementById('settingsOverlay');
 const sCats = document.getElementById('sCats');
@@ -196,21 +196,27 @@ sCats.addEventListener('pointerup', endDrag);
 sCats.addEventListener('pointercancel', endDrag);
 
 // ---------- 백업 내보내기 ----------
-function exportBackup() {
+// 아이폰·안드로이드: 공유 창 → "파일에 저장" / PC: 바로 내려받기
+// (윈도우 크롬은 공유가 된다고 해 놓고 창을 못 띄울 때가 있어서, PC는 처음부터 내려받기. 공유가 실패해도 내려받기로)
+async function exportBackup() {
   const data = {
-    app: 'AIN Todo',
+    app: 'AIN Sked',
     version: 1,
     exportedAt: new Date().toISOString(),
     categories: state.categories,
     tasks: state.tasks,
     settings: state.settings
   };
-  const name = `ain-todo-backup-${ui.today}.json`;
+  const name = `ain-sked-backup-${ui.today}.json`;
   const file = new File([JSON.stringify(data, null, 2)], name, { type: 'application/json' });
-  // 아이폰: 공유 창 → "파일에 저장" / PC: 바로 내려받기
-  if (navigator.canShare && navigator.canShare({ files: [file] })) {
-    navigator.share({ files: [file] }).catch(() => {});
-    return;
+  const mobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.platform));
+  if (mobile && navigator.canShare && navigator.canShare({ files: [file] })) {
+    try {
+      await navigator.share({ files: [file] });
+      return;
+    } catch (err) {
+      if (err && err.name === 'AbortError') return; // 공유 창을 그냥 닫은 경우
+    }
   }
   const url = URL.createObjectURL(file);
   const a = document.createElement('a');
@@ -222,6 +228,48 @@ function exportBackup() {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
+// ---------- 백업 가져오기 ----------
+// AIN Sked·예전 AIN Todo 백업 파일을 읽어서, 이미 있는 할 일(같은 id)은 그대로 두고 없는 할 일·카테고리만 더함
+// 클라우드에 처음 연결하는 중에 더하면 내려받은 내용에 덮여 사라지므로, 연결이 끝난 뒤에만 받음
+const importFile = document.getElementById('importFile');
+
+function importBackup(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    let data;
+    try { data = JSON.parse(reader.result); } catch (e) { data = null; }
+    if (!data || !['AIN Sked', 'AIN Todo'].includes(data.app) || !Array.isArray(data.tasks)) {
+      return showActions('AIN Sked(또는 예전 AIN Todo) 백업 파일이 아니에요. 파일을 다시 골라 주세요.', []);
+    }
+    if (typeof cloud !== 'undefined' && cloud.user && !cloud.ready) {
+      return showActions('아직 클라우드에서 내용을 받는 중이에요. 잠시 뒤 다시 해 주세요.', []);
+    }
+    const haveTasks = new Set(state.tasks.map(t => t.id));
+    const haveCats = new Set(state.categories.map(c => c.id));
+    const newTasks = data.tasks.filter(t => t && t.id && !haveTasks.has(t.id));
+    const newCats = (Array.isArray(data.categories) ? data.categories : []).filter(c => c && c.id && !haveCats.has(c.id));
+    if (!newTasks.length && !newCats.length) {
+      return showActions('새로 가져올 할 일이 없어요. 이미 모두 들어 있어요.', []);
+    }
+    showActions(`할 일 ${newTasks.length}개${newCats.length ? `와 카테고리 ${newCats.length}개` : ''}를 가져와요. 이미 있는 할 일은 그대로 둬요.`, [
+      { label: '가져오기', fn: () => {
+        state.categories = [...state.categories, ...newCats];
+        state.tasks = [...state.tasks, ...newTasks];
+        saveState();
+        renderAll();
+        renderSettings();
+      } }
+    ]);
+  };
+  reader.readAsText(file);
+}
+
+document.getElementById('importBtn').addEventListener('click', () => importFile.click());
+importFile.addEventListener('change', () => {
+  const f = importFile.files && importFile.files[0];
+  importFile.value = ''; // 같은 파일을 다시 골라도 동작하게
+  if (f) importBackup(f);
+});
 document.getElementById('exportBtn').addEventListener('click', exportBackup);
 document.getElementById('logoutBtn').addEventListener('click', () => confirmSignOut());
 document.getElementById('settingsClose').addEventListener('click', () => hideOverlay(settingsOverlay));

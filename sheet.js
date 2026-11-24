@@ -1,4 +1,4 @@
-// AIN Todo 입력 창 v7: 할 일 추가·수정·삭제, 카테고리 바로 만들기, 기한 있는 반복, 할 일 자동완성
+// AIN Sked 입력 창 v7: 할 일 추가·수정·삭제, 카테고리 바로 만들기, 기한 있는 반복, 할 일 자동완성
 
 const COLOR_KEYS = ['blue', 'green', 'red', 'brown', 'purple', 'orange', 'teal', 'pink']; // brown = 노랑
 

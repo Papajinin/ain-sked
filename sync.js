@@ -1,4 +1,4 @@
-// AIN Todo 클라우드 v3: 구글 로그인 + 실시간 동기화 (Firebase Auth + Firestore)
+// AIN Sked 클라우드 v3: 구글 로그인 + 실시간 동기화 (Firebase Auth + Firestore)
 //  - 클라우드 위치: users/{uid} 문서(카테고리, 설정) + users/{uid}/tasks/{할 일 id} 문서 하나씩
 //  - 할 일을 하나씩 따로 저장해서, 폰과 PC에서 서로 다른 할 일을 고쳐도 덮어쓰지 않음
 //  - 다른 기기에서 바꾸면 onSnapshot으로 바로 받아서 화면을 다시 그림
@@ -6,16 +6,17 @@
 //  - 누가 쓸 수 있는지는 Firebase 관리 화면의 Firestore "규칙"에서 정함 (firestore.rules 참고)
 
 // Firebase 관리 화면 → 프로젝트 설정 → 내 앱(웹)에서 복사해 넣는 값
+// 2026-11-24: 예전 프로젝트 ain-todo → 새 프로젝트 ain-sked (기록은 백업 파일 가져오기로 옮김)
 const FIREBASE_CONFIG = {
-  apiKey: 'AIzaSyCNDfsJnE_jHWR1YYWBiCZ_ArCfbiz0OFQ',
-  authDomain: 'ain-todo.firebaseapp.com',
-  projectId: 'ain-todo',
-  storageBucket: 'ain-todo.firebasestorage.app',
-  messagingSenderId: '1097869200161',
-  appId: '1:1097869200161:web:cdc6de820886b4180e8c60'
+  apiKey: 'AIzaSyBqdvwDm1HxZ5MqMWYHk2TMSUP6JQ6bwqI',
+  authDomain: 'ain-sked.firebaseapp.com',
+  projectId: 'ain-sked',
+  storageBucket: 'ain-sked.firebasestorage.app',
+  messagingSenderId: '387718646590',
+  appId: '1:387718646590:web:358e8c3469da700738fa6f'
 };
 
-const UID_KEY = 'ainTodo.uid';          // 이 기기에 마지막으로 로그인한 사람
+const UID_KEY = 'ainSked.uid';          // 이 기기에 마지막으로 로그인한 사람
 const LOCAL_ONLY_SETTINGS = ['theme'];  // 기기마다 따로 두는 설정 (결정 13번)
 
 const loginEl = document.getElementById('login');

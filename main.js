@@ -1,4 +1,4 @@
-// AIN Todo 시작 v10: 헤더, D-Day 핀(길게 눌러 수정 창), 전체 그리기
+// AIN Sked 시작 v10: 헤더, D-Day 핀(길게 눌러 수정 창), 전체 그리기
 
 const monthTitle = document.getElementById('monthTitle');
 const todayBtn = document.getElementById('todayBtn');

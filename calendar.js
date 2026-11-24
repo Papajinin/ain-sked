@@ -1,4 +1,4 @@
-// AIN Todo 캘린더 v4: 일요일·공휴일 빨간 숫자, 주간·월간 접고 펴기, 이전·다음 이동, 쓸어넘기기(손가락 따라 넘어감)
+// AIN Sked 캘린더 v4: 일요일·공휴일 빨간 숫자, 주간·월간 접고 펴기, 이전·다음 이동, 쓸어넘기기(손가락 따라 넘어감)
 
 const calEl = document.getElementById('cal');
 const calBody = document.getElementById('calBody');
