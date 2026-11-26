@@ -1,4 +1,4 @@
-// AIN Sked 일정 찾기 v1: 제목·메모로 찾기 (서랍장의 날짜 없는 할 일은 빼고)
+// AIN Sked 일정 찾기 v2: 제목·메모로 찾기 (서랍장의 날짜 없는 할 일은 빼고)
 //  - 다가오는 일정(오늘 포함, 가까운 날부터)과 지난 일정(최근부터)으로 나눔
 //  - 반복 일정은 묶음 하나를 카드 하나로: 규칙, 다음 날짜, 몇 번 했는지. 누르면 날짜 목록이 펼쳐짐
 //  - 결과를 누르면 창을 닫고 달력이 그 날짜로 감
@@ -180,7 +180,7 @@ function openSearch() {
   searchInput.value = searchQ;
   renderSearch();
   showOverlay(searchOverlay);
-  if (!searchQ) searchInput.focus(); // 처음이면 바로 적을 수 있게
+  // 열자마자 커서를 넣지 않음: 창이 아직 화면 아래에 있을 때 넣으면 아이폰이 화면 전체를 밀어 올림 (v13)
 }
 
 function closeSearch() {

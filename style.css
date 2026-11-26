@@ -555,3 +555,5 @@ body.locked { overflow: hidden; }
 .s-occ-h .s-check { margin: 0; }
 .s-more { display: block; width: 100%; height: 40px; font-size: 14px; color: var(--primary-text); }
 .s-title .skip-tag { display: inline-block; margin-left: 6px; vertical-align: 1px; }
+/* 검색칸은 스크롤 밖 위쪽에 고정: 결과를 내려도 보이고, 키보드가 올라와도 가려지지 않게 (v13) */
+.sheet > .s-box { flex: none; margin: 4px 16px 10px; }
