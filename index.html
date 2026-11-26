@@ -21,7 +21,7 @@
   <script>
     // 새 버전 스스로 받기 (네 앱 공통): 켤 때 서버의 version.txt 숫자가 아래 APP_VERSION보다 크면
     // 새 화면 파일을 받아 한 번 새로고침. 올릴 때마다 두 숫자를 같이 올린다
-    const APP_VERSION = 11;
+    const APP_VERSION = 12;
     (function () {
       const t0 = Date.now();
       const key = 'ainSked.updated'; // 같은 버전으로 두 번 새로고침하지 않게
@@ -37,7 +37,7 @@
         .catch(() => {}); // 인터넷이 안 되면 그냥 염
     })();
   </script>
-  <link rel="stylesheet" href="style.css?v=28">
+  <link rel="stylesheet" href="style.css?v=29">
 </head>
 <body>
   <!-- 시작 화면 (앱을 새로 열 때만, 약 1.6초): 파란 원이 펼쳐지고 → 달력 틀과 고리가 그려지고 → 안에 체크 → 이름 (AIN 앱 공통 순서) -->
@@ -55,6 +55,11 @@
     <header class="top">
       <h1 class="wordmark"><b>AIN</b> Sked</h1>
       <div class="top-right">
+        <button class="icon-btn" id="searchBtn" type="button" aria-label="일정 찾기">
+          <span class="icon-circle">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+          </span>
+        </button>
         <button class="icon-btn" id="drawerBtn" type="button" aria-label="서랍장">
           <span class="icon-circle">
             <svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 9h16M4 15h16M10.5 6h3M10.5 12h3M10.5 18h3"/></svg>
@@ -193,6 +198,25 @@
     </div>
   </div>
 
+  <!-- 일정 찾기: 제목·메모로 찾기, 반복 일정은 카드 하나로 -->
+  <div class="overlay" id="searchOverlay" hidden>
+    <div class="sheet tall" role="dialog" aria-modal="true" aria-labelledby="searchTitle">
+      <div class="sheet-top">
+        <span></span>
+        <h2 id="searchTitle">일정 찾기</h2>
+        <button class="sheet-btn strong" id="searchClose" type="button">닫기</button>
+      </div>
+      <div class="sheet-scroll">
+        <div class="quick s-box">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+          <input id="searchInput" type="search" placeholder="제목이나 메모" aria-label="찾을 글자" enterkeyhint="search" autocomplete="off">
+          <button class="s-clear" id="searchClear" type="button" aria-label="지우기" hidden><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/></svg></button>
+        </div>
+        <div class="d-secs" id="searchRes"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- 설정 -->
   <div class="overlay" id="settingsOverlay" hidden>
     <div class="sheet tall" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
@@ -301,6 +325,7 @@
   <script src="sheet.js?v=8"></script>
   <script src="drawer.js?v=3"></script>
   <script src="pick.js?v=2"></script>
+  <script src="search.js?v=1"></script>
   <script src="settings.js?v=4"></script>
   <script src="sync.js?v=4"></script>
   <script src="lock.js?v=3"></script>
