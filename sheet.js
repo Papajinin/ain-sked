@@ -114,7 +114,7 @@ function holdScroll() {
 function closeSheet() {
   document.activeElement && document.activeElement.blur();
   sheetOverlay.classList.remove('show');
-  document.body.classList.remove('locked');
+  if (!(typeof searchIsOpen === 'function' && searchIsOpen())) document.body.classList.remove('locked'); // 검색 창 위에서 열었으면 뒤 화면은 계속 잠금
   setTimeout(() => { if (!sheetOverlay.classList.contains('show')) sheetOverlay.hidden = true; }, 300);
 }
 

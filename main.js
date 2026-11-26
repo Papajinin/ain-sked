@@ -1,4 +1,4 @@
-// AIN Sked 시작 v10: 헤더, D-Day 핀(길게 눌러 수정 창), 전체 그리기
+// AIN Sked 시작 v11: 헤더, D-Day 핀(길게 눌러 수정 창), 전체 그리기
 
 const monthTitle = document.getElementById('monthTitle');
 const todayBtn = document.getElementById('todayBtn');
@@ -76,6 +76,7 @@ function renderAll() {
   renderCalendar(false);
   renderPickBtn();
   renderList();
+  if (typeof refreshSearch === 'function') refreshSearch(); // 검색 창이 열려 있으면 결과도 새로
 }
 
 document.getElementById('prevBtn').addEventListener('click', () => moveCalendar(-1));

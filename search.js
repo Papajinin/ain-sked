@@ -1,4 +1,5 @@
-// AIN Sked 일정 찾기 v2: 제목·메모로 찾기 (서랍장의 날짜 없는 할 일은 빼고)
+// AIN Sked 일정 찾기 v3: 제목·메모로 찾기 (서랍장의 날짜 없는 할 일은 빼고)
+//  - 결과를 꾹 누르면(0.5초) 수정 창이 검색 창 위에 열림. 저장·삭제하면 결과를 다시 그림
 //  - 다가오는 일정(오늘 포함, 가까운 날부터)과 지난 일정(최근부터)으로 나눔
 //  - 반복 일정은 묶음 하나를 카드 하나로: 규칙, 다음 날짜, 몇 번 했는지. 누르면 날짜 목록이 펼쳐짐
 //  - 결과를 누르면 창을 닫고 달력이 그 날짜로 감
@@ -102,7 +103,7 @@ function sLine(t, q, title) {
 
 function oneHtml(item, q) {
   const t = item.t;
-  return `<button type="button" class="s-item" data-date="${t.date}">
+  return `<button type="button" class="s-item" data-date="${t.date}" data-id="${t.id}">
       <div class="s-date${isRedDay(t.date) ? ' red' : ''}">${sDate(t.date)}</div>
       ${sLine(t, q, markHtml(t.title, q))}
     </button>`;
@@ -131,7 +132,7 @@ function seriesHtml(item, q) {
       const tag = t.done ? `<span class="s-check" style="color:${catColor(t.categoryId)}">${CHECK_SVG}</span>`
         : t.skipped ? '<span class="skip-tag">넘김</span>' : '';
       const memo = hasText(t.memo, needle) ? `<div class="s-memo">메모: ${memoSnippet(t.memo, q)}</div>` : '';
-      return `<button type="button" class="s-occ" data-date="${t.date}">
+      return `<button type="button" class="s-occ" data-date="${t.date}" data-id="${t.id}">
         <div class="s-occ-h"><span class="${isRedDay(t.date) ? 'red' : ''}">${sDate(t.date)}${t.date === ui.today ? ' · 오늘' : ''}</span>${tag}</div>${memo}
       </button>`;
     };
@@ -140,7 +141,7 @@ function seriesHtml(item, q) {
   }
 
   return `<div class="s-series${open ? ' open' : ''}">
-      <button type="button" class="s-item s-card" data-sid="${g.sid}" aria-expanded="${open}">
+      <button type="button" class="s-item s-card" data-sid="${g.sid}" data-id="${sample.id}" aria-expanded="${open}">
         <div class="s-line">
           <span class="s-rep" aria-label="반복">↻</span>
           <span class="t-dot" style="background:${catColor(sample.categoryId)}"></span>
@@ -208,6 +209,7 @@ document.getElementById('searchClear').addEventListener('click', () => {
 });
 
 searchRes.addEventListener('click', e => {
+  if (Date.now() - longPressedAt < 600) return; // 꾹 누른 뒤 손을 뗄 때 생기는 클릭은 무시
   const more = e.target.closest('[data-more]');
   if (more) {
     searchMore.add(more.dataset.more);
@@ -231,3 +233,45 @@ searchRes.addEventListener('click', e => {
 document.getElementById('searchBtn').addEventListener('click', openSearch);
 document.getElementById('searchClose').addEventListener('click', closeSearch);
 searchOverlay.addEventListener('click', e => { if (e.target === searchOverlay) closeSearch(); });
+
+// ---------- 꾹 누르기 (0.5초) → 수정 창 (반복 카드는 다음 날짜, 끝난 반복은 마지막 날짜) ----------
+let sPress = null;
+function cancelSearchPress() {
+  if (!sPress) return;
+  clearTimeout(sPress.timer);
+  sPress.el.classList.remove('pressing');
+  sPress = null;
+}
+searchRes.addEventListener('pointerdown', e => {
+  const el = e.target.closest('[data-id]');
+  if (!el || e.button > 0) return;
+  cancelSearchPress();
+  el.classList.add('pressing');
+  sPress = {
+    el, x: e.clientX, y: e.clientY,
+    timer: setTimeout(() => {
+      const id = el.dataset.id;
+      cancelSearchPress();
+      longPressedAt = Date.now();
+      searchInput.blur();
+      if (findTask(id)) openSheet(id);
+    }, 500)
+  };
+});
+searchRes.addEventListener('pointermove', e => {
+  if (sPress && Math.hypot(e.clientX - sPress.x, e.clientY - sPress.y) > 10) cancelSearchPress();
+});
+searchRes.addEventListener('pointerup', cancelSearchPress);
+searchRes.addEventListener('pointercancel', cancelSearchPress);
+searchRes.addEventListener('pointerleave', cancelSearchPress);
+searchRes.parentElement.addEventListener('scroll', cancelSearchPress, { passive: true });
+searchRes.addEventListener('contextmenu', e => { if (e.target.closest('[data-id]')) e.preventDefault(); });
+
+// 수정 창에서 저장·삭제하면 (renderAll이 부름) 열려 있는 검색 결과도 새로
+function refreshSearch() {
+  if (searchOverlay.hidden || !searchOverlay.classList.contains('show')) return;
+  renderSearch();
+}
+function searchIsOpen() {
+  return !searchOverlay.hidden && searchOverlay.classList.contains('show');
+}

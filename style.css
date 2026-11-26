@@ -557,3 +557,7 @@ body.locked { overflow: hidden; }
 .s-title .skip-tag { display: inline-block; margin-left: 6px; vertical-align: 1px; }
 /* 검색칸은 스크롤 밖 위쪽에 고정: 결과를 내려도 보이고, 키보드가 올라와도 가려지지 않게 (v13) */
 .sheet > .s-box { flex: none; margin: 4px 16px 10px; }
+/* 꾹 누르기: 누르는 동안 줄 색, 아이폰 글자 선택·메뉴 막기. 수정 창은 검색 창 위에 (v14) */
+.s-item, .s-occ { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; transition: background-color var(--t) var(--ease); }
+.s-item.pressing, .s-occ.pressing { background: var(--fill); transition-duration: var(--t-press); }
+#sheetOverlay { z-index: 32; }
